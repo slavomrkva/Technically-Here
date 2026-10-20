@@ -1,0 +1,15 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'sk.technicallyhere'
+    sourceSets { main { assets.srcDirs = ['src/main/appassets'] } }
+    compileSdk 35
+    defaultConfig { applicationId 'sk.technicallyhere'; minSdk 26; targetSdk 35; versionCode 13; versionName '0.4.6'; testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner' }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    testOptions { unitTests.returnDefaultValues = false; unitTests.includeAndroidResources = true }
+    buildTypes { release { minifyEnabled false } }
+}
+dependencies { androidTestImplementation 'androidx.test:runner:1.6.2'; androidTestImplementation 'androidx.test.ext:junit:1.2.1'; testImplementation 'org.robolectric:robolectric:4.14.1'; testImplementation 'junit:junit:4.13.2'; testImplementation 'org.json:json:20240303' }
+
+android.testOptions.unitTests.all {
+  ["http.proxyHost", "http.proxyPort", "https.proxyHost", "https.proxyPort", "robolectric.dependency.repo.url"].each { name -> if (System.getProperty(name)) systemProperty name, System.getProperty(name) }
+}

@@ -1,0 +1,17 @@
+# Android and local build output
+.gradle/
+**/build/
+local.properties
+.idea/
+*.iml
+*.hprof
+# Signing material and generated binaries
+*.keystore
+*.jks
+*.apk
+*.aab
+# Private addons, user data and reference documents
+addons/
+private/
+attendance.json
+hodiny-zaloha-*.json

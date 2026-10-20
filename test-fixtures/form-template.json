@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "id": "Example",
+  "name": "Example",
+  "version": "1.0.0",
+  "title": "Example weekly report",
+  "locale": "de-DE",
+  "signature": true,
+  "shifts": [
+    "S1",
+    "S2",
+    "S3"
+  ],
+  "shiftScope": "week",
+  "fixedActivities": true,
+  "activities": [
+    {
+      "key": "work",
+      "name": "Example",
+      "breakMin": 45,
+      "round": true,
+      "trigger": {
+        "source": "wifi_place",
+        "match": "Example WiFi",
+        "lat": 48.0,
+        "lng": 17.0,
+        "radiusM": 500,
+        "confirmSec": 3600
+      }
+    }
+  ],
+  "fields": [
+    {
+      "key": "company",
+      "label": "Company",
+      "default": "Example",
+      "readonly": true
+    },
+    {
+      "key": "worker",
+      "label": "Name",
+      "default": ""
+    }
+  ],
+  "weekFields": [],
+  "columns": [
+    {
+      "key": "kw",
+      "label": "Week",
+      "source": "week"
+    },
+    {
+      "key": "shift",
+      "label": "Shift",
+      "source": "shift"
+    },
+    {
+      "key": "date",
+      "label": "Date",
+      "source": "date"
+    },
+    {
+      "key": "from",
+      "label": "From",
+      "source": "from"
+    },
+    {
+      "key": "to",
+      "label": "To",
+      "source": "to"
+    },
+    {
+      "key": "pause",
+      "label": "Break",
+      "source": "pause"
+    },
+    {
+      "key": "hours",
+      "label": "Hours",
+      "source": "hours"
+    },
+    {
+      "key": "approved",
+      "label": "Approval",
+      "source": "text",
+      "readonly": true,
+      "default": ""
+    },
+    {
+      "key": "other",
+      "label": "Other",
+      "source": "text",
+      "readonly": true,
+      "default": ""
+    }
+  ],
+  "pdf": {
+    "orientation": "portrait",
+    "sections": [
+      {
+        "type": "text",
+        "text": "Example weekly report"
+      },
+      {
+        "type": "fields",
+        "keys": [
+          "company",
+          "worker"
+        ],
+        "columns": 2
+      },
+      {
+        "type": "table",
+        "totalLabel": "Total"
+      },
+      {
+        "type": "signature",
+        "nameField": "worker"
+      }
+    ],
+    "canvas": {
+      "width": 612,
+      "height": 792,
+      "background": {
+        "x": 0,
+        "y": 0,
+        "width": 612,
+        "height": 792,
+        "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4nGP4//8/AAX+Av4N70a4AAAAAElFTkSuQmCC"
+      },
+      "fields": [
+        {
+          "key": "company",
+          "x": 40,
+          "y": 40,
+          "width": 300,
+          "height": 30
+        },
+        {
+          "key": "worker",
+          "x": 40,
+          "y": 90,
+          "width": 300,
+          "height": 30
+        },
+        {
+          "key": "worker",
+          "x": 40,
+          "y": 680,
+          "width": 300,
+          "height": 30
+        }
+      ],
+      "weekFields": [],
+      "signature": {
+        "x": 40,
+        "y": 620,
+        "width": 140,
+        "height": 40
+      },
+      "exportDate": {
+        "x": 400,
+        "y": 620,
+        "width": 160,
+        "height": 20
+      },
+      "pageNumber": {
+        "x": 520,
+        "y": 750,
+        "width": 50,
+        "height": 15
+      },
+      "table": {
+        "y": 150,
+        "rowHeight": 45,
+        "columns": [
+          {
+            "key": "kw",
+            "x": 40,
+            "width": 25,
+            "fontSize": 7
+          },
+          {
+            "key": "shift",
+            "x": 65,
+            "width": 35,
+            "fontSize": 7
+          },
+          {
+            "key": "date",
+            "x": 100,
+            "width": 50,
+            "fontSize": 7
+          },
+          {
+            "key": "from",
+            "x": 150,
+            "width": 45,
+            "fontSize": 7
+          },
+          {
+            "key": "to",
+            "x": 195,
+            "width": 45,
+            "fontSize": 7
+          },
+          {
+            "key": "pause",
+            "x": 240,
+            "width": 40,
+            "fontSize": 7
+          },
+          {
+            "key": "hours",
+            "x": 280,
+            "width": 45,
+            "fontSize": 7
+          },
+          {
+            "key": "approved",
+            "x": 325,
+            "width": 90,
+            "fontSize": 7
+          },
+          {
+            "key": "other",
+            "x": 415,
+            "width": 157,
+            "fontSize": 7
+          }
+        ],
+        "total": {
+          "x": 280,
+          "y": 480,
+          "width": 60,
+          "height": 24
+        }
+      }
+    }
+  }
+}
