@@ -21,6 +21,8 @@ You can then close the app normally. The silent system notification belongs to t
 
 Returning within the delay keeps the entry continuous. Once departure is confirmed, the end is saved at the first detected departure; the waiting hour is not added. Missing or inaccurate GPS alone does not confirm departure.
 
+In **Wi-Fi or GPS** mode, a known disconnection from the selected Wi-Fi starts the departure delay when GPS is unavailable. A current GPS fix inside the area or reconnection to Wi-Fi cancels departure. Pending departure times survive service/process restarts and phone sleep. If all signals are unknown, the app waits for a usable observation before confirming departure. Stopping tracking or restoring a backup clears pending departures.
+
 ## 3. Enter or correct hours
 
 On **Today**, select an activity and use **Clock in / Clock out**. Under **Hours**, add an entry retrospectively or tap a table cell to edit its time, activity, or note. The table also scrolls horizontally.

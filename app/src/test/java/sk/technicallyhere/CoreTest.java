@@ -490,7 +490,7 @@ public class CoreTest {
   }
 
   @Test
-  public void unknownGpsCannotConfirmDepartureOfCombinedTrigger() {
+  public void missingGpsDoesNotResetObservedWifiDepartureOfCombinedTrigger() {
     JSONObject state = withKinds();
     JSONObject r = rule("combined", "wifi_place", "start", "Office");
     J.put(r, "confirmSec", 60);
@@ -504,16 +504,8 @@ public class CoreTest {
     Core.evaluate(state, v, pending, at("12:00"));
     v.locationValid = false;
     Core.evaluate(state, v, pending, at("12:01"));
-    assertNotNull(Core.open(state));
-    assertTrue(pending.isEmpty());
-    v.locationValid = true;
-    v.fixAt = at("12:02");
-    Core.evaluate(state, v, pending, at("12:02"));
-    assertNotNull(Core.open(state));
-    v.fixAt = at("12:03");
-    Core.evaluate(state, v, pending, at("12:03"));
     assertNull(Core.open(state));
-    assertEquals(at("12:02"), J.array(state, "entries").optJSONObject(0).optLong("end"));
+    assertEquals(at("12:00"), J.array(state, "entries").optJSONObject(0).optLong("end"));
   }
 
   @Test

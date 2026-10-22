@@ -16,7 +16,7 @@ s=s.replace('<application ', '<application android:debuggable="true" ')
 Path('build/native/AndroidManifest.xml').write_text(s)
 PY
 "$here_bt/aapt2" compile --dir app/src/main/res -o "$here_out/resources.zip"
-"$here_bt/aapt2" link -o "$here_out/unsigned.apk" -I "$here_jar" --manifest "$here_out/AndroidManifest.xml" --java "$here_out/generated" --min-sdk-version 26 --target-sdk-version 35 --version-code 13 --version-name 0.4.6 -A app/src/main/appassets "$here_out/resources.zip"
+"$here_bt/aapt2" link -o "$here_out/unsigned.apk" -I "$here_jar" --manifest "$here_out/AndroidManifest.xml" --java "$here_out/generated" --min-sdk-version 26 --target-sdk-version 35 --version-code 14 --version-name 0.4.7 -A app/src/main/appassets "$here_out/resources.zip"
 find app/src/main/java "$here_out/generated" -name '*.java' > "$here_out/sources.txt"
 java com.sun.tools.javac.Main -encoding UTF-8 -source 17 -target 17 -classpath "$here_jar" -d "$here_out/classes" @"$here_out/sources.txt"
 find "$here_out/classes" -name '*.class' > "$here_out/classes.txt"

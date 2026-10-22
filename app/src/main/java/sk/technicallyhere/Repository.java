@@ -60,6 +60,7 @@ public final class Repository {
     J.put(next, "monitorWanted", false);
     J.put(next, "trackingHeartbeat", 0);
     J.put(next, "hold", true);
+    next.remove("automationPending");
     write(J.copy(next));
     loadError = null;
   }

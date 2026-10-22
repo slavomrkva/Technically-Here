@@ -24,7 +24,6 @@ public final class TrackingService extends Service {
   private LocationManager location;
   private ConnectivityManager networks;
   private final Handler handler = new Handler(Looper.getMainLooper());
-  private final Map<String, Long> pending = new HashMap<>();
   private final Map<Network, String> wifiNetworks = new HashMap<>();
   private final Map<String, String> connected = new HashMap<>();
   private BluetoothAdapter adapter;
@@ -32,7 +31,6 @@ public final class TrackingService extends Service {
   private final Map<Integer, BluetoothProfile> profiles = new HashMap<>();
   private ConnectivityManager.NetworkCallback networkCallback;
   private boolean receiverRegistered = false;
-  private long lastTick = 0;
   private long lastHeartbeatElapsed = -60_000;
   private boolean failed = false;
   private final Runnable tick =
@@ -364,16 +362,17 @@ public final class TrackingService extends Service {
   }
 
   private void evaluate() {
+    evaluateAt(System.currentTimeMillis());
+  }
+
+  void evaluateAt(long now) {
     if (active != this) return;
-    long now = System.currentTimeMillis();
-    if (lastTick != 0 && now - lastTick > 90000) pending.clear();
-    lastTick = now;
     try {
       long elapsed = SystemClock.elapsedRealtime();
       boolean checkpoint = elapsed - lastHeartbeatElapsed >= 60_000;
       repo.change(
           s -> {
-            Core.evaluate(s, repo.signals, pending, now);
+            Core.evaluate(s, repo.signals, now);
             if (checkpoint) TrackingRecovery.heartbeat(s, now);
           });
       if (checkpoint) lastHeartbeatElapsed = elapsed;
