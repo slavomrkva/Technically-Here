@@ -59,6 +59,7 @@ final class TrackingRecovery {
   }
 
   static void stopped(JSONObject state) {
+    state.remove("automationPending");
     J.put(state, "monitorWanted", false);
     J.put(state, "trackingHeartbeat", 0);
   }

@@ -476,6 +476,7 @@ public final class Core {
     J.put(state, "auto", false);
     J.put(state, "monitorWanted", false);
     J.put(state, "hold", true);
+    state.remove("automationPending");
     J.put(state, "schemaVersion", 1);
     return state;
   }
@@ -486,6 +487,7 @@ public final class Core {
     J.require(problem == null, problem == null ? "" : problem);
     JSONObject k = J.find(J.array(state, "kinds"), kindId);
     J.require(k != null && !k.optBoolean("archived"), "Add an active activity first.");
+    state.remove("automationPending");
     JSONObject old = open(state);
     if (old != null) J.put(old, "end", now);
     J.array(state, "entries")
@@ -510,6 +512,7 @@ public final class Core {
   }
 
   public static void clockOut(JSONObject state, long at) {
+    state.remove("automationPending");
     JSONObject e = open(state);
     if (e != null) J.put(e, "end", Math.max(e.optLong("start"), at));
   }
@@ -571,11 +574,54 @@ public final class Core {
     return 6371000 * 2 * Math.asin(Math.min(1, Math.sqrt(x)));
   }
 
-  /**
-   * Returns true only when persistent state changed; pending sensor observations remain
-   * service-local.
-   */
+  /** Departure observations are saved atomically with entries, not in service memory. */
+  public static void evaluate(JSONObject state, Signals signals, long now) {
+    evaluate(state, signals, new HashMap<>(), now);
+  }
+
+  /** The map mirrors pending observations for callers; persisted state is authoritative. */
   public static void evaluate(
+      JSONObject state, Signals signals, Map<String, Long> pending, long now) {
+    pending.clear();
+    JSONObject entry = open(state), checkpoint = J.object(state, "automationPending");
+    String rules = J.array(state, "rules").toString();
+    if (entry != null
+        && entry.optString("id").equals(checkpoint.optString("entryId"))
+        && entry.optLong("start") == checkpoint.optLong("entryStart", -1)
+        && entry.optString("ruleId").equals(checkpoint.optString("owner"))
+        && rules.equals(checkpoint.optString("rules"))) {
+      JSONObject times = J.object(checkpoint, "since");
+      for (Iterator<String> keys = times.keys(); keys.hasNext(); ) {
+        String id = keys.next();
+        long first = times.optLong(id, -1);
+        if (first >= entry.optLong("start") && first <= now) pending.put(id, first);
+      }
+    }
+    evaluateRules(state, signals, pending, now);
+    entry = open(state);
+    if (entry == null || pending.isEmpty()) state.remove("automationPending");
+    else {
+      JSONObject times = new JSONObject();
+      for (Map.Entry<String, Long> time : pending.entrySet())
+        J.put(times, time.getKey(), time.getValue());
+      J.put(
+          state,
+          "automationPending",
+          J.obj(
+              "entryId",
+              entry.optString("id"),
+              "entryStart",
+              entry.optLong("start"),
+              "owner",
+              entry.optString("ruleId"),
+              "rules",
+              rules,
+              "since",
+              times));
+    }
+  }
+
+  private static void evaluateRules(
       JSONObject state, Signals signals, Map<String, Long> pending, long now) {
     if (!state.optBoolean("auto", true) || entryProblem(J.array(state, "entries"), now) != null) {
       pending.clear();
@@ -595,6 +641,14 @@ public final class Core {
                 signals,
                 open != null && r.optString("id").equals(open.optString("ruleId")),
                 now);
+        // In combined mode, a known Wi-Fi departure can use the configured grace
+        // period when GPS is unavailable. A current GPS fix inside still keeps
+        // the entry running; unknown sensors alone never establish departure.
+        if (on == null
+            && open != null
+            && r.optString("id").equals(open.optString("ruleId"))
+            && r.optString("source").equals("wifi_place")
+            && Boolean.FALSE.equals(wifiLive(r, signals))) on = false;
         live.put(r.optString("id"), on);
         if (r.optString("effect").equals("stop") && Boolean.TRUE.equals(on)) blocking = true;
         if (r.optString("effect").equals("start") && !Boolean.FALSE.equals(on)) allOff = false;
@@ -643,6 +697,11 @@ public final class Core {
       String id = r.optString("id");
       Boolean on = live.get(id);
       boolean stop = r.optString("effect").equals("stop");
+      if (on == null && (stop || id.equals(owner)) && pending.containsKey(id)) {
+        // Missing observations neither cancel evidence nor confirm a departure.
+        ending.add(id);
+        continue;
+      }
       if (on != null && ((stop && on) || (!stop && id.equals(owner) && !on))) {
         ending.add(id);
         long first = pending.containsKey(id) ? pending.get(id) : now;

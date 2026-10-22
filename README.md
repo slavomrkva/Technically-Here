@@ -10,6 +10,7 @@ Everything runs locally: no account, server, WebView, or internet permission. Th
 - Manual, Wi-Fi SSID, GPS, and **Wi-Fi or GPS** trigger modes.
 - A default GPS radius of 200 metres and a one-hour departure delay.
 - Returning during the delay keeps one continuous entry. Confirmed departures are saved at the first detected departure, without adding the waiting hour.
+- Departure countdowns persist across service restarts and sleep. In combined mode, a known Wi-Fi disconnection can confirm departure after the delay even when GPS is unavailable; a current GPS fix inside the area keeps tracking active.
 - An editable monthly table with activity, dates, times, breaks, hours, and notes.
 - PDF and Markdown exports with selectable fields and activities.
 - Custom weekly report templates, optional weekly shifts, and a drawn signature through declarative addons.
