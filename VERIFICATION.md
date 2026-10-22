@@ -1,6 +1,6 @@
 # Verification
 
-Current working source version: 0.4.6. This publication contains no installable APK.
+Current working source version: 0.4.7. Installable APKs are distributed separately from the source repository.
 
 Private templates and reference documents are excluded. The form under `test-fixtures/` is synthetic: a white background, an example Wi-Fi name, and generic fields. It is used only by automated tests.
 
@@ -15,3 +15,7 @@ After the change, **all 87 tests pass**: 46 existing core tests, 9 new departure
 This environment could download dependencies through Python/curl, but Gradle's Java dependency resolution could not reach its repositories. The full suite therefore ran directly with JUnit 4.13.2 and Robolectric 4.14.1, using the declared dependencies, API 28/35 instrumented Android jars, compiled API 35 app resources, and the app directory as the test working directory. All production Java sources also compiled successfully against Android SDK 35. No installable APK was assembled and the version remains 0.4.6.
 
 No physical phone or emulator is connected. Robolectric checks the shared native Canvas rendering path, not actual PDF bytes from Android PdfDocument. The instrumented PDF test is under `app/src/androidTest/`. Long-running tracking, real GPS/Wi-Fi events, restarts, and manufacturer power-saving policies still require device testing.
+
+## APK build (2026-10-22)
+
+Version 0.4.7 (versionCode 14) packages the tested departure reliability fix. The SDK-only build uses Android Platform 35, Build Tools 35.0.0, Java 17, and the existing local development signing key. The APK signature, version metadata, and signing-certificate compatibility with the previous APK are verified before distribution. No private addon or attendance data is packaged.
